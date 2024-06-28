@@ -1,0 +1,82 @@
+1.적 Enemy만들기
+캐릭터: 좀비
+애니메이션 타입: 메카닉방식 중 Humanoid
+동작: 플레이어를 추적
+         추적범위를 벗어나면 idle(쉬는)동작의 애니메이션 구현
+         플레이어와 가까우면 공격(Attack) 동작을 구현
+
+
+총알에 맞을 때 BloodEffect 구현
+총알에 5번 맞으면 좀비 사망
+사망 애니메이션 구현
+
+
+
+좀비.팩이랑 몬스터파일 임포트하고 04에 몬스터(상위파일 03.모델은 지움)랑 좀비 넣음
+
+04-좀비-모델-압축파일 지우기, z@walk 끌어서 하이라키로 올리고 zombi로 이름 바꾸고 07프리팹에 넣음
+
+프로젝트에서 어택 동작 선택하고 하이라키_좀비를 그 애니메이션창에 넣음
+
+프로젝트에 09.Animators 빈폴더 생성, 우클릭 create - 애니메이터컨트롤러 - 이름:Zombie Animator Controller
+**하이라키에서 좀비 눌렀을 때 애니메이터컴포넌트 생겨야됨
+프로젝트Zombie Animator Controller를 하이라키좀비_애니메이터에 넣고 애니메이션_어플라이루트모션체크해제
+프로젝트에서 09-좀비컨트롤러 더블클릭해서 띄우고 04-좀비-좀비워크동작을 화면에 넣고 어택도 넣고 우클릭해서 셋에즈레이어디폴트어쩌고 클릭
+
+04-몬스터-몬스터-몬스터매카님-영상에 좀비함넣어봄-gothit, idle, die 화면에 끌어올림
+**몬스터매카님_인스팩터에서 루프타임 체크 확인
+아이들우클릭하고 셋에즈클릭
+layer에서 플러스누르고 Face Layer로 이름변경(표정 넣으려고 _근데 안넣을거임 에셋없어서)
+parameter 플러스 누르고 bool - IsTrace로 이름설정, bool누르고 IsAttack 로 이름설정
+메이크트랜지션으로 idle, walk, attack서로서로 사다리같이 이어줌
+
+idle->walk 방향 클릭-has exit time체크해제, transition duration0.03 - conditions컴포넌트 +, Istrace true
+
+walk->idle 방향 클릭-has exit time체크해제, transition duration0.03 - conditions컴포넌트 +, Istrace false
+
+walk->attack 방향클릭-has exit time체크해제, transition duration0.03 - conditions컴포넌트 +, isattacktrue
+
+attack->walk 방향클릭-has exit time체크해제, transition duration0.03 - conditions컴포넌트 +, isattack false
+
+하이라키에서 좀비클릭하고 window-패키지매니저-드롭박스에서 unity registry-돋보기창에 네비게이션 검색하고 install
+**window-ai-네비 생겼는지 확인
+
+하이라키_좀비 - nav Mesh Agent 컴포넌트추가 - 스피드4, stopdistanc를 2.5로설정(바짝 붙는것보다는 좀 퍼스널스페이스를 챙겨주는,,), Autobreaking 체크해제
+
+---스크립트(ZombieCtrl) 생성, 좀비에 넣음---
+
+<<좀비(NPC)가 다닐 공간을 지정해줘야됨>>
+메잉ㄴ레벨메시클릭 후 윈도우-ai-navi(obs) - static체크 후 yes
+메인레벨 - 네비창 - 베이크 - bake클릭
+
+animator - parameter
+
+메인레벨매시밑에 stari_col메시렌더러 체크, window-ai-navi(ob) - generate off 체크해제 - bake - bake  - 매시렌더러체크해제
+monster_Mecanim 하이라키에 올림
+
+
+>>>>>>>><<<<<<<<<
+좀비에 캡슐콜라이더 값 수정 ,리짓바디 추가 - Mass(무게) 값 75설정
+
+----스크립트(ZombieDamage)추가하고 좀비에 넣음
+
+프로젝트에서 좀비리짓바디 - constraints rotation 모두 체크
+좀비 리짓바이 collision Detection - comtinuois dynamic
+
+좀비 에니매이터에서 파라메터 HitTrigger설정
+
+애니->갓힛 - + - 힛트리거
+갓힛->어택 - + - 이즈어택 트루
+갓힛->워크 - + - 이즈트레이스 트루
+갓힛->아이들 - + - 이즈트레이스 false
+
+--스크립트에 움찔거리는(갓힛) 애니메이션 추가
+
+--스크립트에 5발 맞으면 사망하는거 추가
+
+애니메이터에서 파라미터 DieTrigger만듦
+
+애니스테이트->다이 - 다이트리거
+다이->exit - 다이트리거
+
+----스크립트수정
